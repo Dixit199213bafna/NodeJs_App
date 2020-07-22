@@ -9,7 +9,8 @@ router.get('/', (req, res, next) => {
     console.log(adminRouter.products);
     res.render('shop', {
         prods: adminRouter.products,
-        title: 'Doc Shop'
+        title: 'Doc Shop',
+        path: '/'
     });
    // res.sendFile(path.join(__dirname, 'views', 'shop.html'))
 });
