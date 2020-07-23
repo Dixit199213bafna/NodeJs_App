@@ -9,7 +9,13 @@ router.get('/add-product', adminController.getAddProduct);
 
 router.post('/add-product', adminController.postAddProduct);
 
-router.get('/admin-products', adminController.getProducts)
+router.get('/edit-product/:id', adminController.getEditProduct);
+
+router.post('/edit-product/:id', adminController.putEditProduct);
+
+router.get('/admin-products', adminController.getProducts);
+
+router.post('/delete-product/:id', adminController.deleteProduct);
 
 export default {
     router,

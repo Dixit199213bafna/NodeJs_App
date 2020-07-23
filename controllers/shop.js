@@ -1,4 +1,5 @@
 import Product from '../models/product.js';
+import Cart from '../models/cart.js';
 
 const getProducts = (req, res, next) => {
     Product.fetchAll(products => {
@@ -13,6 +14,31 @@ const getProducts = (req, res, next) => {
         });
     });
    // res.sendFile(path.join(__dirname, 'views', 'shop.html'))
+}
+
+const postCart = (req, res, next) => {
+    const prodId = req.body.productId;
+    Product.findById(prodId, product => {
+        Cart.addProduct(prodId, product.price);
+        res.redirect('/cart');
+    });
+}
+
+const getProductDetail = (req, res, next) => {
+    const prodId = req.params.id;
+    Product.findById(prodId, product => {
+        if(product) {
+            res.render('shop/product-detail', {
+                prod: product,
+                title: 'Product Detail',
+                path: '/products',
+                activeShop: true,
+                productCSS: true,
+            });
+        } else {
+            res.redirect('/products');
+        }
+    })
 }
 
 const getIndex = (req, res, next) => {
@@ -47,10 +73,22 @@ const getCheckOut = (req, res, next) => {
     });
 }
 
+const getOrders = (req, res, next) => {
+    res.render('shop/orders', {
+        title: 'Your Orders',
+        path: '/orders',
+        activeShop: true,
+        productCSS: true
+    });
+}
+
 
 export default {
     getProducts,
     getIndex,
     getCart,
-    getCheckOut
+    getCheckOut,
+    getOrders,
+    getProductDetail,
+    postCart
 }

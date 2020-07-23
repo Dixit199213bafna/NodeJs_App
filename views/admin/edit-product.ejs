@@ -4,6 +4,28 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
     <main>
-        Edit Products
+        <form class="product-form" action="<%= path %><% if (editing) {%>/<%= prod.id %> <% } %>" method="POST">
+            <div class="form-control">
+                <label for="title">Title</label>
+                <input type="text" name="title" id="title" value="<%= prod.title %>"/>
+            </div>
+            <div class="form-control">
+                <label for="imageUrl">Image URL</label>
+                <input type="text" name="imageUrl" id="imageUrl" value="<%= prod.imageUrl %>">
+            </div>
+            <div class="form-control">
+                <label for="price">Price</label>
+                <input type="number" name="price" id="price" value="<%= prod.price %>">
+            </div>
+            <div class="form-control">
+                <label for="description">Description</label>
+                <textarea name="description" id="price" rows=5><%= prod.description %></textarea>
+            </div>
+            <% if (!editing) { %>
+                <button type="submit">Add Product</button>
+            <% } else {%>
+                <button type="submit">Update Product</button>
+            <% } %>
+        </form>
     </main>
 <%- include('../includes/end.ejs') %>
