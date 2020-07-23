@@ -1,12 +1,24 @@
 import express from 'express';
 import path from 'path';
+// import expressHdr from 'express-handlebars'; //Handle Bars Import
 
 import adminRouter from './routes/admin.js';
 import shopRouter from './routes/shop.js';
 
 const app = express();
 
-app.set('view engine', 'pug'); //Template Enfing for Dynamic contnet
+//Handle Bars Import
+/* app.engine('hbs', expressHdr({
+    layoutsDir: 'views/layout/',
+    defaultLayout: 'main-layout',
+    extname: 'hbs',
+}));
+
+app.set('view engine', 'hbs'); */
+
+// app.set('view engine', 'pug'); //Template Enfing for Dynamic contnet
+
+app.set('view engine', 'ejs');
 app.set('views', 'views') //Where to find html template
 const __dirname = path.resolve();
 

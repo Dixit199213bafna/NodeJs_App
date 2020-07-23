@@ -10,7 +10,10 @@ router.get('/', (req, res, next) => {
     res.render('shop', {
         prods: adminRouter.products,
         title: 'Doc Shop',
-        path: '/'
+        path: '/',
+        activeShop: true,
+        productCSS: true,
+        hasProducts: adminRouter.products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
     });
    // res.sendFile(path.join(__dirname, 'views', 'shop.html'))
 });
