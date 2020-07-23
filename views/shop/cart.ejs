@@ -4,6 +4,31 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
     <main>
-        Cart
+        <% if(prods.length > 0) { %> 
+            <h1>Total Price: <%= totalPrice %></h1>
+            <table border="1">
+                <thead>
+                    <th>ID</th>
+                    <th>Quantity</th>
+                    <th>Delete</th>
+                </thead>
+                <tbody>
+                    <% prods.forEach(p => { %>
+                        <tr> 
+                            <td><%= p.productData.title %></td>
+                            <td><%= p.qty %></td>
+                            <td>
+                                <form action="/cart-delete-item" method="POST">
+                                    <button type="submit" class="btn">Delete</button>
+                                    <input type="hidden" name="productId" value="<%= p.productData.id %>"/>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+                </table>
+        <% } else { %> 
+            <h1>No Products in cart</h1> 
+        <% } %>
     </main>
 <%- include('../includes/end.ejs') %>

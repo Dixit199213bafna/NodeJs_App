@@ -55,6 +55,9 @@ class Cart {
                ...cart
            };
            const product = udpdatedCart.products.find(prod => prod.id === id);
+           if(!product) {
+               return;
+           }
            const prodQty = product.qty;
            udpdatedCart.products = udpdatedCart.products.filter(prod => prod.id != id);
            udpdatedCart.totalPrice -= (prodPrice * prodQty);
@@ -62,6 +65,15 @@ class Cart {
             console.log(err);
             })
        })
+   }
+
+   static getProducts(cb) {
+    readFile(p, (err, fileContent) => {
+        if(err) {
+         return;
+        }
+        cb(JSON.parse(fileContent));
+    })
    }
 }
 export default Cart;
