@@ -1,5 +1,5 @@
 import path from 'path';
-import { readFile, writeFile } from 'fs';
+import { readFile, writeFile, fstat, read } from 'fs';
 
 const __dirname = path.resolve();
 
@@ -37,12 +37,31 @@ class Cart {
                     updatedProduct
                 ]
             }
-            cart.totalPrice += productPrice;
+            cart.totalPrice += +productPrice;
             writeFile(p, JSON.stringify(cart), (err) => {
                 console.log(err);
             })
         });
    }
-}
 
+   static deleteProduct(id, prodPrice) {
+       let cart;
+       readFile(p, (err, fileContent) => {
+           if(err) {
+            return;
+           }
+           cart = JSON.parse(fileContent);
+           const udpdatedCart = {
+               ...cart
+           };
+           const product = udpdatedCart.products.find(prod => prod.id === id);
+           const prodQty = product.qty;
+           udpdatedCart.products = udpdatedCart.products.filter(prod => prod.id != id);
+           udpdatedCart.totalPrice -= (prodPrice * prodQty);
+           writeFile(p, JSON.stringify(udpdatedCart), (err) => {
+            console.log(err);
+            })
+       })
+   }
+}
 export default Cart;
