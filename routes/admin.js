@@ -1,13 +1,15 @@
 import express from 'express';
 import path from 'path';
 
-import productController from '../controllers/products.js'
+import adminController from '../controllers/admin.js'
 const router = express.Router();
 const __dirname = path.resolve();
 
-router.get('/add-product', productController.getAddProduct);
+router.get('/add-product', adminController.getAddProduct);
 
-router.post('/add-product', productController.postAddProduct);
+router.post('/add-product', adminController.postAddProduct);
+
+router.get('/admin-products', adminController.getProducts)
 
 export default {
     router,

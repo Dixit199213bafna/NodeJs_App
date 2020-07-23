@@ -1,10 +1,8 @@
 import Product from '../models/product.js';
 
-const products = [];
-
 const getAddProduct = (req, res, next) => {
     //res.sendFile(path.join(__dirname, 'views', 'add-product.html'));
-    res.render('add-product', {
+    res.render('admin/add-product', {
         title: 'Add Products',
         path: '/admin/add-product',
         formsCSS: true,
@@ -22,10 +20,10 @@ const postAddProduct = (req,res) => {
 const getProducts = (req, res, next) => {
     Product.fetchAll(products => {
         console.log(products);
-        res.render('shop', {
+        res.render('admin/products', {
             prods: products,
-            title: 'Doc Shop',
-            path: '/',
+            title: 'Admin Products',
+            path: '/admin/admin-products',
             activeShop: true,
             productCSS: true,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
