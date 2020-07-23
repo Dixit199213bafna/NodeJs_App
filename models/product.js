@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'fs'; 
 import path from 'path';
-
+import Cart from './cart.js';
 const __dirname = path.resolve();
 
 const p = path.join(__dirname, 'data', 'products.json');
@@ -54,10 +54,14 @@ class Product {
 
     static deleteProduct(id, cb) {
         getProductsFromFile(products => {
+            const product = products.find(prod => prod.id === id);
             const productIndex = products.findIndex(prod => prod.id === id);
             const updatedProducts = [...products];
             updatedProducts.splice(productIndex, 1);
             writeFile(p, JSON.stringify(updatedProducts), (err) => {
+                if(!err) {
+                    Cart.deleteProduct(id, product.price);
+                }
                 cb(err);
             });
         })

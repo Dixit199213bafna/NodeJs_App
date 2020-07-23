@@ -60,7 +60,7 @@ const getProducts = (req, res, next) => {
 const putEditProduct = (req, res, next) => {
     const prodId = req.params.id;
     const { title, description, price, imageUrl} = req.body;
-    const updateProduct = new Product(prodId, title, description, imageUrl, price);
+    const updateProduct = new Product(prodId, title, description, imageUrl, +price);
     updateProduct.save();
     res.redirect('/admin/admin-products');
 }
