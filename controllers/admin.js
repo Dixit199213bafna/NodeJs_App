@@ -15,13 +15,14 @@ const getAddProduct = (req, res, next) => {
 
 const postAddProduct = (req,res) => {
     const { title, imageUrl, price, description } = req.body;
-    Product.create({
+    // CreateProduct Method is added by sequalize due to association/relation
+    req.user.createProduct({
         title, imageUrl, description, price: +price,
     }).then(() => {
         res.redirect('/admin/admin-products');
     }).catch(e => {
         console.log(e);
-    })
+    });
 }
 
 const getEditProduct = (req, res, next) => {
@@ -30,9 +31,13 @@ const getEditProduct = (req, res, next) => {
     if(!editMode) {
         res.redirect('/');
     }
-    Product.findByPk(id).then(product => {
+    req.user.getProducts({
+        where: {
+            id,
+        }
+    }).then(products => {
         res.render('admin/edit-product', {
-            prod: product,
+            prod: products[0],
             title: 'Edit Products',
             path: '/admin/edit-product',
             editing: editMode,
@@ -46,7 +51,7 @@ const getEditProduct = (req, res, next) => {
 }
 
 const getProducts = (req, res, next) => {
-    Product.findAll().then(products => {
+    req.user.getProducts().then(products => {
         res.render('admin/products', {
             prods: products,
             title: 'Admin Products',
