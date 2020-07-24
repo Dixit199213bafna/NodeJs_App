@@ -6,7 +6,7 @@ import path from 'path';
 import adminRouter from './routes/admin.js';
 import shopRouter from './routes/shop.js';
 import errorController from './controllers/error.js'
-
+import seq from './util/database.js';
 const app = express();
 
 //Handle Bars Import
@@ -33,5 +33,9 @@ app.use(errorController.get404)
 
 // const server = createServer(app);
 // server.listen(3000);
-
-app.listen(3000);
+seq.sequelize.sync().then(res => {
+    // console.log(res);
+    app.listen(3000);
+}).catch(e => {
+    console.log(err);
+}); // Sync MOdel to DB and create models

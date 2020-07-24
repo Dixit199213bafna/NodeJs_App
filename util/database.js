@@ -1,4 +1,20 @@
-import mysql from 'mysql2';
+import Sequelize from 'sequelize';
+
+const sequelize = new Sequelize(
+    'node-complete',
+    'root',
+    'testtest',
+    {
+        dialect: 'mysql',
+        host: 'localhost'
+    }
+);
+
+export default {
+    sequelize,
+}
+
+/* import mysql from 'mysql2';
 
 const pool = mysql.createPool({
     host:'localhost',
@@ -9,4 +25,4 @@ const pool = mysql.createPool({
 
 export default {
     pool
-};
+}; */
