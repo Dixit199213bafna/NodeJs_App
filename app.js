@@ -9,6 +9,8 @@ import errorController from './controllers/error.js'
 import seq from './util/database.js';
 import Product from './models/product.js';
 import User from './models/user.js';
+import Cart from './models/cart.js';
+import CartItem from './models/cart-items.js';
 const app = express();
 
 //Handle Bars Import
@@ -48,6 +50,14 @@ Product.belongsTo(User, {
     onDelete: 'CASCADE' // If user is deleted all products created by user should also be deleted. 
 });
 User.hasMany(Product);
+User.hasOne(Cart);
+Cart.belongsTo(User);
+Cart.belongsToMany(Product, {
+    through: CartItem
+});
+Product.belongsToMany(Cart, {
+    through: CartItem
+});
 
 seq.sequelize.sync().then(res => {
     // console.log(res);
@@ -61,7 +71,9 @@ seq.sequelize.sync().then(res => {
     } else {
         return Promise.resolve(user);
     }
-}).then((user) => {
+}).then(user => {
+    return user.createCart();
+}).then(user => {
     app.listen(3000);
 }).catch(e => {
     console.log(e);
