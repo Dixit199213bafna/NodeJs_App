@@ -1,17 +1,18 @@
-import { readFile, writeFile } from 'fs'; 
-import path from 'path';
+// import { readFile, writeFile } from 'fs'; 
+// import path from 'path';
+import db from '../util/database.js';
 import Cart from './cart.js';
-const __dirname = path.resolve();
+// const __dirname = path.resolve();
 
-const p = path.join(__dirname, 'data', 'products.json');
-const getProductsFromFile = (cb) => {
-    readFile(p, (err, fileContent) => {
-        if(err) {
-            return cb([]);
-        }
-        cb(JSON.parse(fileContent));
-    })
-}
+// const p = path.join(__dirname, 'data', 'products.json');
+// const getProductsFromFile = (cb) => {
+//     readFile(p, (err, fileContent) => {
+//         if(err) {
+//             return cb([]);
+//         }
+//         cb(JSON.parse(fileContent));
+//     })
+// }
 
 class Product {
     constructor(id, title, description, imageUrl, price) {
@@ -23,7 +24,9 @@ class Product {
     }
 
     save() {
-        getProductsFromFile(products => {
+        return db.pool.execute('INSERT INTO products (title, price, imageUrl, description) VALUES (?,?,?,?)', 
+        [this.title, this.price, this.imageUrl, this.description])
+        /* getProductsFromFile(products => {
             if(this.id) {
                 const updatedProductIndex = products.findIndex(prod => prod.id === this.id);
                 const updatedProducts = [...products];
@@ -38,22 +41,24 @@ class Product {
                     console.log(err);
                 });
             }
-        })
+        }) */
     }
 
     static fetchAll(cb) {
-        getProductsFromFile(cb);
+        return db.pool.execute('SELECT * FROM products');
+        // getProductsFromFile(cb);
     }
 
     static findById(id, cb) {
-        getProductsFromFile(products => {
+        return db.pool.execute('SELECT * FROM products where products.id = ?', [id]);
+        /* getProductsFromFile(products => {
             const product = products.find(prod => prod.id === id);
             cb(product);
-        })
+        }) */
     }
 
     static deleteProduct(id, cb) {
-        getProductsFromFile(products => {
+        /* getProductsFromFile(products => {
             const product = products.find(prod => prod.id === id);
             const productIndex = products.findIndex(prod => prod.id === id);
             const updatedProducts = [...products];
@@ -64,7 +69,7 @@ class Product {
                 }
                 cb(err);
             });
-        })
+        })*/
     }
 }
 

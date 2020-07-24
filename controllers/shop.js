@@ -2,7 +2,19 @@ import Product from '../models/product.js';
 import Cart from '../models/cart.js';
 
 const getProducts = (req, res, next) => {
-    Product.fetchAll(products => {
+    Product.fetchAll().then(([rows, filedData]) => {
+        res.render('shop/product-list', {
+            prods: rows,
+            title: 'All Products',
+            path: '/products',
+            activeShop: true,
+            productCSS: true,
+            hasProducts: rows.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
+        });
+    }).catch(e => {
+        console.log(e);
+    })
+    /* Product.fetchAll(products => {
         console.log(products);
         res.render('shop/product-list', {
             prods: products,
@@ -12,7 +24,7 @@ const getProducts = (req, res, next) => {
             productCSS: true,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
         });
-    });
+    }); */
    // res.sendFile(path.join(__dirname, 'views', 'shop.html'))
 }
 
@@ -26,7 +38,23 @@ const postCart = (req, res, next) => {
 
 const getProductDetail = (req, res, next) => {
     const prodId = req.params.id;
-    Product.findById(prodId, product => {
+    Product.findById(prodId).then(([product]) => {
+        console.log(product);
+        if(product) {
+            res.render('shop/product-detail', {
+                prod: product[0],
+                title: 'Product Detail',
+                path: '/products',
+                activeShop: true,
+                productCSS: true,
+            });
+        } else {
+            res.redirect('/products');
+        }
+    }).catch(e => {
+        console.log(e);
+    })
+    /*Product.findById(prodId, product => {
         if(product) {
             res.render('shop/product-detail', {
                 prod: product,
@@ -38,11 +66,23 @@ const getProductDetail = (req, res, next) => {
         } else {
             res.redirect('/products');
         }
-    })
+    })*/
 }
 
 const getIndex = (req, res, next) => {
-    Product.fetchAll(products => {
+    Product.fetchAll().then(([rows, filedData]) => {
+        res.render('shop/product-list', {
+            prods: rows,
+            title: 'Shop',
+            path: '/',
+            activeShop: true,
+            productCSS: true,
+            hasProducts: rows.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
+        });
+    }).catch(e => {
+        console.log(e);
+    })
+    /* Product.fetchAll(products => {
         console.log(products);
         res.render('shop/index', {
             prods: products,
@@ -52,7 +92,7 @@ const getIndex = (req, res, next) => {
             productCSS: true,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
         });
-    });
+    }); */
 }
 
 const getCart = (req, res, next) => {
