@@ -1,5 +1,6 @@
 import Product from '../models/product.js';
 import Cart from '../models/cart.js';
+import Order from '../models/order.js';
 
 const getProducts = (req, res, next) => {
     Product.findAll().then((products) => {
@@ -117,12 +118,18 @@ const getCheckOut = (req, res, next) => {
 }
 
 const getOrders = (req, res, next) => {
-    res.render('shop/orders', {
-        title: 'Your Orders',
-        path: '/orders',
-        activeShop: true,
-        productCSS: true
-    });
+    req.user.getOrders({ include: ['products']}).then(orders => {
+        console.log(orders);
+        res.render('shop/orders', {
+            title: 'Your Orders',
+            path: '/orders',
+            activeShop: true,
+            productCSS: true,
+            orders: orders
+        });
+    }).catch(e => {
+        console.log(e);
+    })
 }
 
 const deleteCartItem = (req, res, next) => {
@@ -142,6 +149,27 @@ const deleteCartItem = (req, res, next) => {
     });
 }
 
+const postOrder = (req, res, next) => {
+    let fetchedCart;
+    req.user.getCart().then(cart => {
+        fetchedCart = cart;
+        return cart.getProducts();
+    }).then(products => {
+        return req.user.createOrder().then(order => {
+            order.addProducts(products.map(prod => {
+                prod.orderItem = {
+                    quantity: prod.cartItem.quantity
+                }
+                return prod;
+            }))
+        });
+    }).then(result => {
+        return fetchedCart.setProducts(null);
+    }).then(() => {
+        res.redirect('/orders');
+    });
+}
+
 export default {
     getProducts,
     getIndex,
@@ -150,5 +178,6 @@ export default {
     getOrders,
     getProductDetail,
     postCart,
-    deleteCartItem
+    deleteCartItem,
+    postOrder
 }

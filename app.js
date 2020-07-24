@@ -11,6 +11,8 @@ import Product from './models/product.js';
 import User from './models/user.js';
 import Cart from './models/cart.js';
 import CartItem from './models/cart-items.js';
+import Order from './models/order.js';
+import OrderItem from './models/order-items.js';
 const app = express();
 
 //Handle Bars Import
@@ -57,6 +59,11 @@ Cart.belongsToMany(Product, {
 });
 Product.belongsToMany(Cart, {
     through: CartItem
+});
+Order.belongsTo(User);
+User.hasMany(Order);
+Order.belongsToMany(Product, {
+    through: OrderItem
 });
 
 seq.sequelize.sync().then(res => {
