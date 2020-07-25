@@ -19,33 +19,10 @@ const getProducts = (req, res, next) => {
 
 const postCart = (req, res, next) => {
     const prodId = req.body.productId;
-    let newQuantity = 1;
-    let fetchedCart;
-    req.user.getCart().then(cart => {
-        fetchedCart = cart;
-        return cart.getProducts({
-            where: {
-               id:  prodId
-            }
-        })
-    }).then(products => {
-        let product;
-        if(products.length > 0) {
-            product = products[0];
-        }
-        if(product) {
-            const oldQuantity = product.cartItem.quantity;
-            newQuantity += oldQuantity;
-            return product;
-        } 
-        return Product.findByPk(prodId);
-    }).then(product => {
-        return fetchedCart.addProduct(product, {
-            through: {
-                quantity: newQuantity,
-            }
-        })
-    }).then(() => {
+    Product.findbyId(prodId).then(product => {
+        return req.user.addToCart(product)
+    }).then(result => {
+        console.log(result)
         res.redirect('/cart');
     }).catch(e => {
         console.log(e);
@@ -87,10 +64,7 @@ const getIndex = (req, res, next) => {
 }
 
 const getCart = (req, res, next) => {
-    req.user.getCart().then(cart => {
-        return cart.getProducts();
-    }).then(products => {
-        console.log(products);
+    req.user.getCart().then(products => {
         res.render('shop/cart', {
             prods: products,
             // totalPrice: cart.totalPrice,
@@ -114,7 +88,7 @@ const getCheckOut = (req, res, next) => {
 }
 
 const getOrders = (req, res, next) => {
-    req.user.getOrders({ include: ['products']}).then(orders => {
+    req.user.getOrders().then(orders => {
         console.log(orders);
         res.render('shop/orders', {
             title: 'Your Orders',
@@ -125,20 +99,11 @@ const getOrders = (req, res, next) => {
         });
     }).catch(e => {
         console.log(e);
-    })
+    });
 }
 
 const deleteCartItem = (req, res, next) => {
-    req.user.getCart().then(cart => {
-        return cart.getProducts({
-            where: {
-                id: req.body.productId
-            }
-        })
-    }).then(products => {
-        const product = products[0];
-        return product.cartItem.destroy();
-    }).then(() => {
+    req.user.deleteCartItem(req.body.productId).then(() => {
         res.redirect('/cart');
     }).catch(e => {
         console.log(e);
@@ -146,34 +111,39 @@ const deleteCartItem = (req, res, next) => {
 }
 
 const postOrder = (req, res, next) => {
-    let fetchedCart;
-    req.user.getCart().then(cart => {
-        fetchedCart = cart;
-        return cart.getProducts();
-    }).then(products => {
-        return req.user.createOrder().then(order => {
-            order.addProducts(products.map(prod => {
-                prod.orderItem = {
-                    quantity: prod.cartItem.quantity
-                }
-                return prod;
-            }))
-        });
-    }).then(result => {
-        return fetchedCart.setProducts(null);
-    }).then(() => {
+    req.user.addOrder().then(() => {
         res.redirect('/orders');
-    });
+    }).catch(e => {
+        console.log(e);
+    })
+    // let fetchedCart;
+    // req.user.getCart().then(cart => {
+    //     fetchedCart = cart;
+    //     return cart.getProducts();
+    // }).then(products => {
+    //     return req.user.createOrder().then(order => {
+    //         order.addProducts(products.map(prod => {
+    //             prod.orderItem = {
+    //                 quantity: prod.cartItem.quantity
+    //             }
+    //             return prod;
+    //         }))
+    //     });
+    // }).then(result => {
+    //     return fetchedCart.setProducts(null);
+    // }).then(() => {
+    //     res.redirect('/orders');
+    // });
 }
 
 export default {
     getProducts,
     getIndex,
-    // getCart,
+    getCart,
     // getCheckOut,
-    // getOrders,
+    getOrders,
     getProductDetail,
-    // postCart,
-    // deleteCartItem,
-    // postOrder
+    postCart,
+    deleteCartItem,
+    postOrder
 }
