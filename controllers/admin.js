@@ -15,14 +15,10 @@ const getAddProduct = (req, res, next) => {
 
 const postAddProduct = (req,res) => {
     const { title, imageUrl, price, description } = req.body;
-    // CreateProduct Method is added by sequalize due to association/relation
-    req.user.createProduct({
-        title, imageUrl, description, price: +price,
-    }).then(() => {
+    const product = new Product(title, +price, description, imageUrl);
+    product.save().then(result => {
         res.redirect('/admin/admin-products');
-    }).catch(e => {
-        console.log(e);
-    });
+    }).catch(e => e);
 }
 
 const getEditProduct = (req, res, next) => {
@@ -31,13 +27,9 @@ const getEditProduct = (req, res, next) => {
     if(!editMode) {
         res.redirect('/');
     }
-    req.user.getProducts({
-        where: {
-            id,
-        }
-    }).then(products => {
+    Product.findbyId(id).then(product => {
         res.render('admin/edit-product', {
-            prod: products[0],
+            prod: product,
             title: 'Edit Products',
             path: '/admin/edit-product',
             editing: editMode,
@@ -51,7 +43,7 @@ const getEditProduct = (req, res, next) => {
 }
 
 const getProducts = (req, res, next) => {
-    req.user.getProducts().then(products => {
+    Product.fetchAll().then(products => {
         res.render('admin/products', {
             prods: products,
             title: 'Admin Products',
@@ -62,31 +54,23 @@ const getProducts = (req, res, next) => {
         });
     }).catch(e => {
         console.log(e);
-    })
+    });
 }
 
 const putEditProduct = (req, res, next) => {
     const prodId = req.params.id;
     const { title, description, price, imageUrl} = req.body;
-    Product.findByPk(prodId).then(product => {
-        product.title = title;
-        product.imageUrl = imageUrl;
-        product.description = description;
-        product.price = +price;
-        return product.save();
-    }).then(() => {
+    const product = new Product(title, +price, description, imageUrl, prodId);
+    product.save().then(() => {
         res.redirect('/admin/admin-products');
     }).catch(e => {
         console.log(e);
-    })
-    // const updateProduct = new Product(prodId, title, description, imageUrl, +price);
-    // updateProduct.save();
-    // res.redirect('/admin/admin-products');
+    });
 }
 
 const deleteProduct = (req, res, next) => {
     const prodId = req.params.id;
-    Product.findByPk(prodId).then(product => product.destroy())
+    Product.deletebyId(prodId)
     .then(() => {
         res.redirect('/admin/admin-products');
     }).catch(e => {

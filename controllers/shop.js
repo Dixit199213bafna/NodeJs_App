@@ -1,9 +1,9 @@
 import Product from '../models/product.js';
-import Cart from '../models/cart.js';
-import Order from '../models/order.js';
+// import Cart from '../models/cart.js';
+// import Order from '../models/order.js';
 
 const getProducts = (req, res, next) => {
-    Product.findAll().then((products) => {
+    Product.fetchAll().then((products) => {
         res.render('shop/product-list', {
             prods: products,
             title: 'All Products',
@@ -54,11 +54,7 @@ const postCart = (req, res, next) => {
 
 const getProductDetail = (req, res, next) => {
     const prodId = req.params.id;
-    Product.findOne({
-        where: {
-            id: +prodId
-        }
-    }).then((product) => {
+    Product.findbyId(prodId).then(product => {
         if(product) {
             res.render('shop/product-detail', {
                 prod: product,
@@ -76,7 +72,7 @@ const getProductDetail = (req, res, next) => {
 }
 
 const getIndex = (req, res, next) => {
-    Product.findAll().then((products) => {
+    Product.fetchAll().then((products) => {
         res.render('shop/product-list', {
             prods: products,
             title: 'Shop',
@@ -173,11 +169,11 @@ const postOrder = (req, res, next) => {
 export default {
     getProducts,
     getIndex,
-    getCart,
-    getCheckOut,
-    getOrders,
+    // getCart,
+    // getCheckOut,
+    // getOrders,
     getProductDetail,
-    postCart,
-    deleteCartItem,
-    postOrder
+    // postCart,
+    // deleteCartItem,
+    // postOrder
 }

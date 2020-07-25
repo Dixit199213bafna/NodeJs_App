@@ -1,28 +1,27 @@
-import Sequelize from 'sequelize';
+import mongodb from 'mongodb';
+const MongoClient = mongodb.MongoClient;
 
-const sequelize = new Sequelize(
-    'node-complete',
-    'root',
-    'testtest',
-    {
-        dialect: 'mysql',
-        host: 'localhost'
-    }
-);
+let _db;
 
-export default {
-    sequelize,
+const mongoConnect = (callback) => {
+    MongoClient.connect('mongodb+srv://bafna:testtest@cluster0.upt3y.mongodb.net/shop?retryWrites=true&w=majority')
+    .then(client => {
+        console.log('connected');
+        _db = client.db();
+        callback(); // result is client object that gives access to DB; 
+    }).catch(e => {
+        throw e;
+    });
 }
 
-/* import mysql from 'mysql2';
-
-const pool = mysql.createPool({
-    host:'localhost',
-    user: 'root',
-    database: 'node-complete',
-    password: 'testtest'
-}).promise();
+const getDb = () => {
+    if(_db) {
+        return _db;
+    }
+    throw 'No Database found';
+}
 
 export default {
-    pool
-}; */
+    mongoConnect,
+    getDb
+}

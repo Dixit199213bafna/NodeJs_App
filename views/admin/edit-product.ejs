@@ -4,7 +4,7 @@
 <body>
     <%- include('../includes/navigation.ejs') %>
     <main>
-        <form class="product-form" action="<%= path %><% if (editing) {%>/<%= prod.id %> <% } %>" method="POST">
+        <form class="product-form" action="<%= path %><% if (editing) {%>/<%= prod._id %> <% } %>" method="POST">
             <div class="form-control">
                 <label for="title">Title</label>
                 <input type="text" name="title" id="title" value="<%= prod.title %>"/>
