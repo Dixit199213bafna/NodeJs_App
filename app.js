@@ -1,12 +1,12 @@
 import express from 'express';
 import path from 'path';
+import mongoose from 'mongoose';
 
 // import expressHdr from 'express-handlebars'; //Handle Bars Import
 
 import adminRouter from './routes/admin.js';
 import shopRouter from './routes/shop.js';
 import errorController from './controllers/error.js'
-import mongo from './util/database.js';
 import User from './models/user.js';
 const app = express();
 
@@ -16,8 +16,8 @@ app.set('views', 'views') //Where to find html template
 
 const __dirname = path.resolve();
 app.use((req, res, next) => {
-    User.findByUserId('5f1c4c1ffdfab62b3abffbd0').then(user => {
-        req.user = new User(user.name, user.email, user.cart, user._id);
+    User.findById('5f1d8de3420dfb17f71efe9a').then(user => {
+        req.user = user;
         next();
     }).catch(e => {
         console.log(e);
@@ -30,6 +30,21 @@ app.use(shopRouter);
 
 app.use(errorController.get404)
 
-mongo.mongoConnect(() => {
+mongoose.connect('mongodb+srv://bafna:testtest@cluster0.upt3y.mongodb.net/shop?retryWrites=true&w=majority').then(() => {
+    User.findOne().then(user => {
+        if(!user) {
+            const user = new User({
+                name: 'Dixit',
+                email: 'dixit@gmail.com',
+                cart: {
+                    items: []
+                }
+            })
+            return user.save();
+        }
+    })
+}).then(() => {
     app.listen(3000);
+}).catch(e => {
+    console.log(e);
 });

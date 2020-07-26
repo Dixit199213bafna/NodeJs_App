@@ -15,7 +15,10 @@ const getAddProduct = (req, res, next) => {
 
 const postAddProduct = (req,res) => {
     const { title, imageUrl, price, description } = req.body;
-    const product = new Product(title, +price, description, imageUrl, null, req.user._id);
+    const product = new Product({
+        title, imageUrl, price, description, userId: req.user
+    });
+    // save method by Mongoose.
     product.save().then(result => {
         res.redirect('/admin/admin-products');
     }).catch(e => e);
@@ -27,7 +30,7 @@ const getEditProduct = (req, res, next) => {
     if(!editMode) {
         res.redirect('/');
     }
-    Product.findbyId(id).then(product => {
+    Product.findById(id).then(product => {
         res.render('admin/edit-product', {
             prod: product,
             title: 'Edit Products',
@@ -43,7 +46,11 @@ const getEditProduct = (req, res, next) => {
 }
 
 const getProducts = (req, res, next) => {
-    Product.fetchAll().then(products => {
+    Product.find()
+    // .select('title price -_id') // Mongoose feature to get only specified data
+    // .populate('userId', 'name -_id') // Populate gives the entire user object based on userid
+    .then(products => {
+        console.log(products);
         res.render('admin/products', {
             prods: products,
             title: 'Admin Products',
@@ -55,13 +62,14 @@ const getProducts = (req, res, next) => {
     }).catch(e => {
         console.log(e);
     });
+    // Product.fetchAll()
 }
 
 const putEditProduct = (req, res, next) => {
     const prodId = req.params.id;
     const { title, description, price, imageUrl} = req.body;
-    const product = new Product(title, +price, description, imageUrl, prodId);
-    product.save().then(() => {
+   //  const product = new Product(title, +price, description, imageUrl, prodId);
+    Product.findByIdAndUpdate(prodId, { title, description, price, imageUrl}).then(() => {
         res.redirect('/admin/admin-products');
     }).catch(e => {
         console.log(e);
@@ -70,7 +78,9 @@ const putEditProduct = (req, res, next) => {
 
 const deleteProduct = (req, res, next) => {
     const prodId = req.params.id;
-    Product.deletebyId(prodId)
+    Product.deleteOne({
+        _id: prodId
+    })
     .then(() => {
         res.redirect('/admin/admin-products');
     }).catch(e => {
