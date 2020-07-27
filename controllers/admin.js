@@ -10,6 +10,7 @@ const getAddProduct = (req, res, next) => {
         formsCSS: true,
         productCSS: true,
         activeAddProduct: true,
+        isAuthenticated: req.session.isLoggedIn,
     })
 }
 
@@ -39,6 +40,7 @@ const getEditProduct = (req, res, next) => {
             formsCSS: true,
             productCSS: true,
             activeAddProduct: true,
+            isAuthenticated: req.session.isLoggedIn,
         })
     });
     //res.sendFile(path.join(__dirname, 'views', 'add-product.html'));
@@ -50,13 +52,13 @@ const getProducts = (req, res, next) => {
     // .select('title price -_id') // Mongoose feature to get only specified data
     // .populate('userId', 'name -_id') // Populate gives the entire user object based on userid
     .then(products => {
-        console.log(products);
         res.render('admin/products', {
             prods: products,
             title: 'Admin Products',
             path: '/admin/admin-products',
             activeShop: true,
             productCSS: true,
+            isAuthenticated: req.session.isLoggedIn,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
         });
     }).catch(e => {

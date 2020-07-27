@@ -11,6 +11,7 @@ const getProducts = (req, res, next) => {
             path: '/products',
             activeShop: true,
             productCSS: true,
+            isAuthenticated: req.session.isLoggedIn,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
         });
     }).catch(e => {
@@ -40,6 +41,7 @@ const getProductDetail = (req, res, next) => {
                 path: '/products',
                 activeShop: true,
                 productCSS: true,
+                isAuthenticated: req.session.isLoggedIn,
             });
         } else {
             res.redirect('/products');
@@ -50,6 +52,7 @@ const getProductDetail = (req, res, next) => {
 }
 
 const getIndex = (req, res, next) => {
+    console.log(req.session.isLoggedIn);
     Product.find({}).then((products) => {
         res.render('shop/product-list', {
             prods: products,
@@ -57,6 +60,7 @@ const getIndex = (req, res, next) => {
             path: '/',
             activeShop: true,
             productCSS: true,
+            isAuthenticated: req.session.isLoggedIn,
             hasProducts: products.length > 0 // Needed for Hbs as it cannot write logic in template or expression in template
         });
     }).catch(e => {
@@ -75,10 +79,12 @@ const getCart = (req, res, next) => {
             title: 'Your Cart',
             path: '/cart',
             activeShop: true,
-            productCSS: true
+            productCSS: true,
+            isAuthenticated: req.session.isLoggedIn,
         });
     }).catch(e => {
-        console.log(e)
+        console.log(e);
+        redirect('/login');
     });
 }
 
@@ -96,13 +102,13 @@ const getOrders = (req, res, next) => {
         'user.userId': req.user._id
     }).populate('products.product')
     .then(orders => {
-        console.log(orders[0].products);
         res.render('shop/orders', {
             title: 'Your Orders',
             path: '/orders',
             activeShop: true,
             productCSS: true,
-            orders: orders
+            orders: orders,
+            isAuthenticated: req.session.isLoggedIn,
         });
     }).catch(e => {
         console.log(e);
