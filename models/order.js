@@ -17,7 +17,7 @@ const orderScheme = new Scheme({
         }
     ],
     user: {
-        name: {
+        email: {
             type: String,
             required: true,
         },

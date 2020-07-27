@@ -3,7 +3,7 @@ import path from 'path';
 import mongoose from 'mongoose';
 import session from 'express-session';
 import mongodbSessionStore from 'connect-mongodb-session';
-
+import csrf from 'csurf';
 // import expressHdr from 'express-handlebars'; //Handle Bars Import
 
 import adminRouter from './routes/admin.js';
@@ -18,6 +18,7 @@ app.set('view engine', 'ejs');
 
 app.set('views', 'views') //Where to find html template
 
+const csrfProtection = csrf();
 const __dirname = path.resolve();
 const sessionStore = mongodbSessionStore(session);
 const store = new sessionStore({
@@ -30,6 +31,7 @@ app.use(session({
     saveUninitialized: false,
     store: store,
 }));
+// app.use(csrfProtection);
 app.use((req, res, next) => {
     if(req.session.user) {
         User.findById(req.session.user._id).then(user => {
