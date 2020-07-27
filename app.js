@@ -50,20 +50,8 @@ app.use(shopRouter);
 
 app.use(errorController.get404)
 
-mongoose.connect(uri).then(() => {
-    User.findOne().then(user => {
-        if(!user) {
-            const user = new User({
-                name: 'Dixit',
-                email: 'dixit@gmail.com',
-                cart: {
-                    items: []
-                }
-            })
-            return user.save();
-        }
-    })
-}).then(() => {
+mongoose.connect(uri)
+.then(() => {
     app.listen(3000);
 }).catch(e => {
     console.log(e);
