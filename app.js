@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import session from 'express-session';
 import mongodbSessionStore from 'connect-mongodb-session';
 import csrf from 'csurf';
+import flash from 'connect-flash';
 // import expressHdr from 'express-handlebars'; //Handle Bars Import
 
 import adminRouter from './routes/admin.js';
@@ -44,6 +45,7 @@ app.use((req, res, next) => {
         next();
     }
 });
+app.use(flash())
 app.use(express.urlencoded({ extended: true })); // Get data from request parameter
 app.use(express.static(path.join(__dirname, 'public'))); // Public files like css
 app.use(loginRouter);
